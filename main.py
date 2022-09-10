@@ -11,13 +11,13 @@ def is_moves_left(board):
 
 # Check if player has won and if so return the winner.
 def has_player_won(b):
-    for row in range(len(b)):
-        if b[row][0] != '_' and len(set(b[row])) == 1: 
-            return True, b[row][0]
+    for r in range(len(b)):
+        if b[r][0] != '_' and len(set(b[r])) == 1: 
+            return True, b[r][0]
     
-    for column in range(len(b)):
-        if b[0][column] != '_' and len(set([row[column] for row in b])) == 1: 
-            return True, b[0][column]
+    for c in range(len(b)):
+        if b[0][c] != '_' and len(set([r[c] for r in b])) == 1: 
+            return True, b[0][c]
 
     if b[0][0] != '_' and len(set([b[x][x] for x in range(len(b))])) == 1:
         return True, b[0][0]
@@ -48,24 +48,24 @@ def minimax(board, depth, is_max, alpha, beta):
     
     if is_max:
         best = -math.inf
-        for i in range(len(board)):
-            for j in range(len(board)):
-                if (board[i][j] == '_'):
-                    board[i][j] = 'x'
+        for r in range(len(board)):
+            for c in range(len(board)):
+                if (board[r][c] == '_'):
+                    board[r][c] = player
                     best = max(best,  minimax(board, depth + 1, not is_max, alpha, beta))
-                    board[i][j] = '_'
+                    board[r][c] = '_'
                     alpha = max(alpha, best)
                     if beta <= alpha: break
         return best
     
     else:
         best = math.inf
-        for i in range(len(board)):
-            for j in range(len(board)):
-                if (board[i][j] == '_'):
-                    board[i][j] = 'o'
-                    best = min(best,  minimax(board, depth + 1, not is_max, alpha, beta))
-                    board[i][j] = '_'
+        for r in range(len(board)):
+            for c in range(len(board)):
+                if (board[r][c] == '_'):
+                    board[r][c] = opponent
+                    best = min(best, minimax(board, depth + 1, not is_max, alpha, beta))
+                    board[r][c] = '_'
                     beta = min(beta, best)
                     if beta <= alpha: break
         return best
@@ -74,27 +74,27 @@ def minimax(board, depth, is_max, alpha, beta):
 def find_best_move(board):
     best_val = -1000
     best_move = (-1, -1)
-    for i in range(len(board)):
-        for j in range(len(board)):
-            if board[i][j] == '_':
-                board[i][j] = player
-                move_val = minimax(board, 0, player, -math.inf, math.inf)
-                board[i][j] = '_'
+    for r in range(len(board)):
+        for c in range(len(board)):
+            if board[r][c] == '_':
+                board[r][c] = player
+                move_val = minimax(board, 0, False, -math.inf, math.inf)
+                board[r][c] = '_'
                 if (move_val > best_val):
-                    best_move = (i, j)
+                    best_move = (r, c)
                     best_val = move_val
     
     print('The value of the best move is :', best_val)
     return best_move
 
 def generate_empty_board(length):
-    board = [['_' for i in range(length)] for j in range(length)]
+    board = [['_' for c in range(length)] for r in range(length)]
     return board
 
 def prettify_board(board):
     string = ''
-    for i in range(len(board)):
-        string += str(board[i]) + '\n'
+    for r in range(len(board)):
+        string += str(board[r]) + '\n'
     string = string.strip()
     return string
 
@@ -107,9 +107,9 @@ def raw_board_to_board(raw_board):
     length = int(math.sqrt(len(flat_board)))
     board = generate_empty_board(length)
 
-    for i in range(length):
-        for j in range(length):
-            board[i][j] = flat_board.pop(0)
+    for r in range(length):
+        for c in range(length):
+            board[r][c] = flat_board.pop(0)
     
     return board
 
@@ -157,7 +157,6 @@ def play_against_ai():
                 r, c = '-1', '-1'
                 
                 if len(player_input) == 2:
-                    print(player_input)
                     r, c = player_input
 
             board[int(r)][int(c)] = find_next_player(board)
